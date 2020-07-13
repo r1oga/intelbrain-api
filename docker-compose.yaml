@@ -1,0 +1,12 @@
+version: '3.6'
+
+services:
+  smartbrain-api:
+    container_name: backend
+    build: ./
+    command: yarn start
+    working_dir: /home/r1oga/dev/udemy/junior-to-senior/smartbrain/api
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./:/home/r1oga/dev/udemy/junior-to-senior/smartbrain/api
