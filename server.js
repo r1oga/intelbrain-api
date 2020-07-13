@@ -22,7 +22,7 @@ const db = knex({
 
 const app = express()
 
-app.use(cors())
+app.use(cors()) // allow any domain to access our server endpoints
 app.use(bodyParser.json())
 
 app.get('/', (req, res) => {
