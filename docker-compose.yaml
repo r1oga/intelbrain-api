@@ -7,6 +7,7 @@ services:
     command: yarn start
     working_dir: /home/r1oga/dev/udemy/junior-to-senior/smartbrain/api
     environment:
+      POSTGRES_URI: postgres://joe:biden@postgres:5432/smartbrain-docker
       POSTGRES_USER: joe
       POSTGRES_PASSWORD: biden
       POSTGRES_DB: smartbrain-docker
@@ -24,6 +25,6 @@ services:
       POSTGRES_PASSWORD: biden
       POSTGRES_DB: smartbrain-docker
       POSTGRES_HOST: postgres
-    image: postgres
+    build: ./postgres
     ports:
       - '5433:5432'
