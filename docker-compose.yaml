@@ -12,8 +12,6 @@ services:
       POSTGRES_PASSWORD: biden
       POSTGRES_DB: smartbrain-docker
       POSTGRES_HOST: postgres
-    links:
-      - postgres
     ports:
       - '3000:3000'
     volumes:
