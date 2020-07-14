@@ -14,12 +14,6 @@ const image = require('./controllers/image')
 const db = knex({
   client: 'pg',
   connection: process.env.POSTGRES_URI
-  // connection: {
-  //   host: process.env.POSTGRES_HOST, //localhost
-  //   user: process.env.POSTGRES_USER,
-  //   password: process.env.POSTGRES_PASSWORD,
-  //   database: process.env.POSTGRES_DB
-  // }
 })
 
 const app = express()
@@ -29,16 +23,21 @@ app.use(cors()) // allow any domain to access our server endpoints
 app.use(bodyParser.json())
 
 app.get('/', (req, res) => {
-  res.send('API running on container')
-  // res.send(db.users)
+  res.send(db.users)
 })
+
 app.post('/signin', signin.handleSignin(db, bcrypt))
 app.post('/register', (req, res) => {
   register.handleRegister(req, res, db, bcrypt)
 })
+
 app.get('/profile/:id', (req, res) => {
   profile.handleProfileGet(req, res, db)
 })
+app.post('/profile/:id', (req, res) => {
+  profile.handleProfileUpdate(req, res, db)
+})
+
 app.put('/image', (req, res) => {
   image.handleImage(req, res, db)
 })
