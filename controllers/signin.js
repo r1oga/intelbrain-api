@@ -67,5 +67,6 @@ const authenticate = (db, bcrypt) => (req, res) => {
 }
 
 module.exports = {
-  authenticate
+  authenticate,
+  redisClient
 }
