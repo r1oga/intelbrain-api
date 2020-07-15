@@ -12,6 +12,7 @@ services:
       POSTGRES_PASSWORD: biden
       POSTGRES_DB: smartbrain-docker
       POSTGRES_HOST: postgres
+      REDIS_URI: redis://redis:6379
     ports:
       - '3000:3000'
     volumes:
@@ -26,3 +27,8 @@ services:
     build: ./postgres
     ports:
       - '5433:5432'
+
+  redis:
+    image: redis:latest
+    ports:
+      - '6379:6379'
