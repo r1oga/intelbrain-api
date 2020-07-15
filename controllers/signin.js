@@ -37,10 +37,14 @@ const getAuthTokenId = () => {
 const signToken = email =>
   jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '2 days' })
 
+const setKey = (key, value) => Promise.resolve(redisClient.set(key, value))
+
 const createSession = ({ email, id }) => {
   // create JWT token
   const token = signToken(email)
-  return { success: true, id, token }
+  return setKey(token, id)
+    .then(() => ({ success: true, id, token }))
+    .catch(console.log)
 }
 
 const authenticate = (db, bcrypt) => (req, res) => {
