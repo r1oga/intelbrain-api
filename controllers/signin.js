@@ -1,7 +1,39 @@
 const jwt = require('jsonwebtoken')
-const redisClient = require('redis').createClient({
-  host: process.env.REDIS_URI
-})
+const redisClient = require('redis').createClient(process.env.REDIS_URI)
+
+const signToken = email => {
+  if (process.env.JWT_SECRET) {
+    return jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '2 days' })
+  } else {
+    return false
+  }
+}
+
+const setRedisKey = (key, value) => Promise.resolve(redisClient.set(key, value))
+
+const createSession = ({ email, id }) => {
+  // create JWT token
+  const token = signToken(email)
+  if (token) {
+    return setRedisKey(token, id)
+      .then(() => ({ success: true, id, token }))
+      .catch(err => 'Could not set key')
+  } else {
+    return Promise.reject(
+      'Failed to create session. Is JWT_SECRET environment variable defined?'
+    )
+  }
+}
+
+const getAuthTokenId = (req, res) => {
+  const { authorization } = req.headers
+  return redisClient.get(authorization, (err, reply) => {
+    if (err || !reply) {
+      return res.status(401).json('Unauthorized')
+    }
+    return res.json({ id: reply })
+  })
+}
 
 const handleSignin = (db, bcrypt, req, res) => {
   const { email, password } = req.body
@@ -22,43 +54,19 @@ const handleSignin = (db, bcrypt, req, res) => {
           .from('users')
           .where('email', '=', email)
           .then(user => user[0])
-          .catch(err => Promise.reject('Unable to get user'))
+          .catch(err => 'Unable to get user')
       } else {
-        Promise.reject('Wrong password')
+        return Promise.reject('Wrong password')
       }
     })
-    .catch(err => Promise.reject('Unable to find account with this email'))
-}
-
-const signToken = email =>
-  jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '2 days' })
-
-const setKey = (key, value) => Promise.resolve(redisClient.set(key, value))
-
-const getAuthTokenId = (req, res) => {
-  const { authorization } = req.headers
-  return redisClient.get(authorization, (err, reply) => {
-    if (err || !reply) {
-      return res.status(400).json('Unauthorized')
-    }
-    return res.json({ id: reply })
-  })
-}
-
-const createSession = ({ email, id }) => {
-  // create JWT token
-  const token = signToken(email)
-  return setKey(token, id)
-    .then(() => ({ success: true, id, token }))
-    .catch(console.log)
+    .catch(err => 'Email not found')
 }
 
 const authenticate = (db, bcrypt) => (req, res) => {
   const { authorization } = req.headers
-
   return authorization
     ? getAuthTokenId(req, res)
-    : handleSignin(db, brypt, req, res)
+    : handleSignin(db, bcrypt, req, res)
         .then(data =>
           data.id && data.email ? createSession(data) : Promise.reject(data)
         )
