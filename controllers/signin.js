@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const redisClient = require('redis').createClient(process.env.REDIS_URI)
+const redisClient = require('redis').createClient(process.env.REDIS_URL)
 
 const signToken = email => {
   if (process.env.JWT_SECRET) {
