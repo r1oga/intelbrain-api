@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "script.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js",
+    "deploy": "git push heroku deployment:master"
   },
   "keywords": [],
   "author": "",
@@ -24,5 +25,7 @@
   "devDependencies": {
     "nodemon": "^1.12.7"
   },
-  "description": ""
+  "engines": {
+    "node": "12.18.1"
+  }
 }
