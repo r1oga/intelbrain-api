@@ -30,5 +30,3 @@ This project was part of [Andrei Neagoie](https://github.com/aneagoie)'s [The Co
 4. You must 
 
 You can grab Clarifai API key [here](https://www.clarifai.com/)
-
-** Make sure you use postgreSQL instead of mySQL for this code base.
